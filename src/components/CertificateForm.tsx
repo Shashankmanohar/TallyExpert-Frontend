@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +13,8 @@ interface CertificateData {
   certificateNumber: string;
   rollNo: string;
   passingYear: string;
+  courseOfDuration: string;
+  courseName: string;
 }
 
 interface Certificate extends CertificateData {
@@ -34,49 +35,95 @@ const CertificateForm = ({ editingCertificate, onSubmit, onCancel }: Certificate
     dateOfBirth: "",
     certificateNumber: "",
     rollNo: "",
-    passingYear: ""
+    passingYear: "",
+    courseOfDuration: "",
+    courseName: ""
   });
+  
+
   const { toast } = useToast();
 
- 
+  const generateUniqueCertificateNumber = () => {
+    const timestamp = Date.now();
+    return `TC-${timestamp}`;
+  };
 
   useEffect(() => {
     if (editingCertificate) {
-      setFormData({
+      const newFormData = {
         studentName: editingCertificate.studentName,
         fatherName: editingCertificate.fatherName,
         dateOfBirth: editingCertificate.dateOfBirth,
         certificateNumber: editingCertificate.certificateNumber,
         rollNo: editingCertificate.rollNo,
-        passingYear: editingCertificate.passingYear
-      });
+        passingYear: editingCertificate.passingYear,
+        courseOfDuration: editingCertificate.courseOfDuration,
+        courseName: editingCertificate.courseName
+      };
+      setFormData(newFormData);
     } else {
-      setFormData({
+      const emptyFormData = {
         studentName: "",
         fatherName: "",
         dateOfBirth: "",
-        certificateNumber: "",
+        certificateNumber: generateUniqueCertificateNumber(),
         rollNo: "",
-        passingYear: ""
-      });
+        passingYear: "",
+        courseOfDuration: "",
+        courseName: ""
+      };
+      setFormData(emptyFormData);
     }
   }, [editingCertificate]);
 
-
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
     
-    if (!editingCertificate) {
-      setFormData({
-        studentName: "",
-        fatherName: "",
-        dateOfBirth: "",
-        certificateNumber: "",
-        rollNo: "",
-        passingYear: ""
+    // Check all required fields
+    const requiredFields = ['studentName', 'fatherName', 'dateOfBirth', 'certificateNumber', 'rollNo', 'passingYear', 'courseOfDuration', 'courseName'];
+    const missingFields = requiredFields.filter(field => !formData[field as keyof CertificateData] || formData[field as keyof CertificateData] === '');
+    
+    if (missingFields.length > 0) {
+      toast({
+        title: "Validation Error",
+        description: `Please fill in all required fields: ${missingFields.join(', ')}`,
+        variant: "destructive",
       });
+      return;
+    }
+    
+    // Create a deep copy of the form data to prevent any interference
+    const submissionData = {
+      studentName: formData.studentName,
+      fatherName: formData.fatherName,
+      dateOfBirth: formData.dateOfBirth,
+      certificateNumber: formData.certificateNumber,
+      rollNo: formData.rollNo,
+      passingYear: formData.passingYear,
+      courseOfDuration: formData.courseOfDuration,
+      courseName: formData.courseName
+    };
+    
+
+    
+    // Call onSubmit with the prepared data
+    onSubmit(submissionData);
+
+    // Reset form after submission (will be overridden if editing)
+    if (!editingCertificate) {
+      setTimeout(() => {
+        const emptyFormData = {
+          studentName: "",
+          fatherName: "",
+          dateOfBirth: "",
+          certificateNumber: generateUniqueCertificateNumber(),
+          rollNo: "",
+          passingYear: "",
+          courseOfDuration: "",
+          courseName: ""
+        };
+        setFormData(emptyFormData);
+      }, 100); // Small delay to ensure data is sent
     }
   };
 
@@ -96,21 +143,23 @@ const CertificateForm = ({ editingCertificate, onSubmit, onCancel }: Certificate
           )}
         </div>
         <p className="text-muted-foreground">
-          {editingCertificate 
-            ? 'Update the student certificate details' 
-            : 'Fill in the student details to generate a new certificate entry'
-          }
+          {editingCertificate
+            ? 'Update the student certificate details'
+            : 'Fill in the student details to generate a new certificate entry'}
         </p>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" id="certificateForm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="studentName">Student Name</Label>
               <Input
                 id="studentName"
                 value={formData.studentName}
-                onChange={(e) => setFormData(prev => ({ ...prev, studentName: e.target.value }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData(prev => ({ ...prev, studentName: value }));
+                }}
                 placeholder="Enter student's full name"
                 required
               />
@@ -120,7 +169,10 @@ const CertificateForm = ({ editingCertificate, onSubmit, onCancel }: Certificate
               <Input
                 id="fatherName"
                 value={formData.fatherName}
-                onChange={(e) => setFormData(prev => ({ ...prev, fatherName: e.target.value }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData(prev => ({ ...prev, fatherName: value }));
+                }}
                 placeholder="Enter father's name"
                 required
               />
@@ -131,26 +183,46 @@ const CertificateForm = ({ editingCertificate, onSubmit, onCancel }: Certificate
                 id="dateOfBirth"
                 type="date"
                 value={formData.dateOfBirth}
-                onChange={(e) => setFormData(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData(prev => ({ ...prev, dateOfBirth: value }));
+                }}
                 required
               />
             </div>
             <div>
               <Label htmlFor="certificateNumber">Certificate Number</Label>
-              <Input
-                id="certificateNumber"
-                value={formData.certificateNumber}
-                onChange={(e) => setFormData(prev => ({ ...prev, certificateNumber: e.target.value }))}
-                placeholder="e.g., TEC2025001"
-                required
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="certificateNumber"
+                  value={formData.certificateNumber}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData(prev => ({ ...prev, certificateNumber: value }));
+                  }}
+                  placeholder="e.g., TEC2025001"
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setFormData(prev => ({ ...prev, certificateNumber: generateUniqueCertificateNumber() }))}
+                  className="whitespace-nowrap"
+                >
+                  Generate New
+                </Button>
+              </div>
             </div>
             <div>
               <Label htmlFor="rollNo">Roll Number</Label>
               <Input
                 id="rollNo"
                 value={formData.rollNo}
-                onChange={(e) => setFormData(prev => ({ ...prev, rollNo: e.target.value }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData(prev => ({ ...prev, rollNo: value }));
+                }}
                 placeholder="Enter roll number"
                 required
               />
@@ -160,14 +232,41 @@ const CertificateForm = ({ editingCertificate, onSubmit, onCancel }: Certificate
               <Input
                 id="passingYear"
                 value={formData.passingYear}
-                onChange={(e) => setFormData(prev => ({ ...prev, passingYear: e.target.value }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData(prev => ({ ...prev, passingYear: value }));
+                }}
                 placeholder="e.g., 2025"
                 required
               />
             </div>
+            <div>
+              <Label htmlFor="courseOfDuration">Course Duration</Label>
+              <Input
+                id="courseOfDuration"
+                value={formData.courseOfDuration}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData(prev => ({ ...prev, courseOfDuration: value }));
+                }}
+                placeholder="e.g., 3 Months"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="courseName">Course Name</Label>
+              <Input
+                id="courseName"
+                value={formData.courseName}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData(prev => ({ ...prev, courseName: value }));
+                }}
+                placeholder="e.g., Tally"
+                required
+              />
+            </div>
           </div>
-
-
 
           <Button type="submit" className="w-full" variant="professional" size="lg">
             <Upload className="mr-2 h-4 w-4" />

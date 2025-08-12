@@ -18,6 +18,8 @@ interface CertificateData {
   certificateNumber: string;
   rollNo: string;
   passingYear: string;
+  courseOfDuration: string;
+  courseName: string;
 }
 
 interface Certificate extends CertificateData {
@@ -94,6 +96,9 @@ const Admin = () => {
   const handleSubmitCertificate = async (formData: CertificateData) => {
     try {
       setIsLoading(true);
+      
+
+      
       if (editingCertificate) {
         // Update existing certificate (you'll need to add update endpoint to backend)
         toast({
@@ -105,6 +110,7 @@ const Admin = () => {
       } else {
         // Add new certificate
         const response = await certificateAPI.create(formData);
+        
         const newCertificate = response.data.certificate;
         setCertificates(prev => [...prev, newCertificate]);
         toast({
@@ -114,6 +120,10 @@ const Admin = () => {
       }
     } catch (error: any) {
       console.error('Error submitting certificate:', error);
+      console.error('Error details:', error.response?.data); // Debug log
+      console.error('Error status:', error.response?.status);
+      console.error('Error message:', error.response?.data?.message);
+      console.error('Full error response:', error.response);
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to submit certificate",
@@ -190,13 +200,6 @@ const Admin = () => {
                 {isLoading ? "Logging in..." : "Login to Admin Panel"}
               </Button>
             </form>
-            <div className="mt-4 p-3 bg-muted rounded-md">
-              <p className="text-sm text-muted-foreground">
-                <strong>Demo Credentials:</strong><br />
-                Email: admin@tallyexpert.com<br />
-                Password: Tallyexpert@2025
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -1,8 +1,19 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Trash2, Users } from "lucide-react";
 
@@ -14,6 +25,8 @@ interface Certificate {
   certificateNumber: string;
   rollNo: string;
   passingYear: string;
+  courseOfDuration: string; // Added
+  courseName: string;       // Added
   createdAt: string;
 }
 
@@ -23,11 +36,22 @@ interface CertificateListProps {
   onDelete: (id: string) => void;
 }
 
-const CertificateList = ({ certificates, onEdit, onDelete }: CertificateListProps) => {
+const ITEMS_PER_PAGE = 10;
+
+const CertificateList = ({
+  certificates,
+  onEdit,
+  onDelete,
+}: CertificateListProps) => {
   const { toast } = useToast();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = (id: string, studentName: string) => {
-    if (window.confirm(`Are you sure you want to delete the certificate for ${studentName}?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the certificate for ${studentName}?`
+      )
+    ) {
       onDelete(id);
       toast({
         title: "Certificate Deleted",
@@ -36,12 +60,22 @@ const CertificateList = ({ certificates, onEdit, onDelete }: CertificateListProp
     }
   };
 
+  // Pagination Logic
+  const totalPages = Math.ceil(certificates.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentCertificates = certificates.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
   if (certificates.length === 0) {
     return (
       <Card className="shadow-elegant">
         <CardContent className="text-center py-8">
           <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">No certificates found. Add your first certificate to get started.</p>
+          <p className="text-muted-foreground">
+            No certificates found. Add your first certificate to get started.
+          </p>
         </CardContent>
       </Card>
     );
@@ -63,18 +97,28 @@ const CertificateList = ({ certificates, onEdit, onDelete }: CertificateListProp
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12 text-center">S.No.</TableHead>
                 <TableHead className="w-16">Photo</TableHead>
                 <TableHead>Student Name</TableHead>
-                <TableHead className="hidden md:table-cell">Father's Name</TableHead>
-                <TableHead className="hidden sm:table-cell">Certificate No.</TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Father's Name
+                </TableHead>
+                <TableHead className="hidden sm:table-cell">
+                  Certificate No.
+                </TableHead>
                 <TableHead className="hidden lg:table-cell">Roll No.</TableHead>
                 <TableHead className="hidden lg:table-cell">Year</TableHead>
+                <TableHead>Course Name</TableHead>
+                <TableHead>Course Duration</TableHead>
                 <TableHead className="w-24">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {certificates.map((certificate) => (
+              {currentCertificates.map((certificate, index) => (
                 <TableRow key={certificate._id}>
+                  <TableCell className="text-center">
+                    {startIndex + index + 1}
+                  </TableCell>
                   <TableCell>
                     <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                       <Users className="h-5 w-5 text-muted-foreground" />
@@ -85,6 +129,9 @@ const CertificateList = ({ certificates, onEdit, onDelete }: CertificateListProp
                       <p className="font-semibold">{certificate.studentName}</p>
                       <p className="text-sm text-muted-foreground md:hidden">
                         {certificate.certificateNumber}
+                      </p>
+                      <p className="text-sm text-muted-foreground md:hidden">
+                        Course: {certificate.courseName} ({certificate.courseOfDuration})
                       </p>
                     </div>
                   </TableCell>
@@ -101,6 +148,12 @@ const CertificateList = ({ certificates, onEdit, onDelete }: CertificateListProp
                     {certificate.passingYear}
                   </TableCell>
                   <TableCell>
+                    {certificate.courseName}
+                  </TableCell>
+                  <TableCell>
+                    {certificate.courseOfDuration}
+                  </TableCell>
+                  <TableCell>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
@@ -113,7 +166,9 @@ const CertificateList = ({ certificates, onEdit, onDelete }: CertificateListProp
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDelete(certificate._id, certificate.studentName)}
+                        onClick={() =>
+                          handleDelete(certificate._id, certificate.studentName)
+                        }
                         className="h-8 w-8 p-0"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -124,6 +179,31 @@ const CertificateList = ({ certificates, onEdit, onDelete }: CertificateListProp
               ))}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center items-center mt-4 gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === i + 1
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          {currentPage < totalPages && (
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="px-3 py-1 bg-gray-200 text-gray-700 rounded"
+            >
+              Next
+            </button>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -6,14 +6,15 @@ import { Download, FileSpreadsheet } from "lucide-react";
 import * as XLSX from 'xlsx';
 
 interface Certificate {
-  id: string;
+  _id: string;
   studentName: string;
   fatherName: string;
   dateOfBirth: string;
   certificateNumber: string;
-  rollNumber: string;
+  rollNo: string;
   passingYear: string;
-  photo: string;
+  courseOfDuration: string;
+  courseName: string;
   createdAt: string;
 }
 
@@ -34,17 +35,18 @@ const ExportData = ({ certificates }: ExportDataProps) => {
       return;
     }
 
-    // Prepare data for Excel export (excluding photo data for readability)
+    // Prepare data for Excel export (including course information)
     const exportData = certificates.map((cert, index) => ({
       'Sr. No.': index + 1,
       'Student Name': cert.studentName,
       'Father Name': cert.fatherName,
       'Date of Birth': new Date(cert.dateOfBirth).toLocaleDateString('en-IN'),
       'Certificate Number': cert.certificateNumber,
-      'Roll Number': cert.rollNumber,
+      'Roll Number': cert.rollNo,
       'Passing Year': cert.passingYear,
-      'Created Date': new Date(cert.createdAt).toLocaleDateString('en-IN'),
-      'Has Photo': cert.photo ? 'Yes' : 'No'
+      'Course Name': cert.courseName,
+      'Course Duration': cert.courseOfDuration,
+      'Created Date': new Date(cert.createdAt).toLocaleDateString('en-IN')
     }));
 
     // Create workbook and worksheet
@@ -60,8 +62,9 @@ const ExportData = ({ certificates }: ExportDataProps) => {
       { wch: 18 }, // Certificate Number
       { wch: 15 }, // Roll Number
       { wch: 12 }, // Passing Year
-      { wch: 15 }, // Created Date
-      { wch: 10 }  // Has Photo
+      { wch: 20 }, // Course Name
+      { wch: 18 }, // Course Duration
+      { wch: 15 }  // Created Date
     ];
     worksheet['!cols'] = columnWidths;
 

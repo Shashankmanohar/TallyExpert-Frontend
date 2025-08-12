@@ -2,16 +2,17 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'https://tally-expert-backend-vxo2.vercel.app/api',
+  baseURL: 'https://tally-expert-backend-vxo2.vercel.app/api', 
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor to add auth token
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('adminToken');
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,24 +25,28 @@ api.interceptors.request.use(
 
 // Response interceptor to handle errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('adminToken');
-      window.location.href = '/admin';
+      window.location.href = '/admin'; // redirect to login
     }
     return Promise.reject(error);
   }
 );
 
-// API endpoints
+
 export const authAPI = {
   login: (credentials: { email: string; password: string }) =>
     api.post('/admin/loginAdmin', credentials),
+
   createAdmin: (adminData: { name: string; email: string; password: string; role: string }) =>
     api.post('/admin/createAdmin', adminData),
 };
 
+// Certificate endpoints
 export const certificateAPI = {
   create: (certificateData: {
     studentName: string;
@@ -50,14 +55,20 @@ export const certificateAPI = {
     rollNo: string;
     passingYear: string;
     certificateNumber: string;
+    courseOfDuration: string;
+    courseName: string;
   }) => api.post('/certificate/create', certificateData),
-  
-  getAll: () => api.get('/certificate/getAll'),
-  
-  getOne: (params: { studentName: string; fatherName: string; dateOfBirth: string; certificateNumber: string }) =>
-    api.get('/certificate/getOne', { params }),
 
-  delete: (id: string) => api.delete(`/certificate/delete/${id}`),
+  getAll: () => api.get('/certificate/getAll'),
+
+  getOne: (params: {
+    studentName: string;
+    fatherName: string;
+    dateOfBirth: string;
+    certificateNumber: string;
+  }) => api.get('/certificate/getOne', { params }),
+
+  delete: (id: string) => api.delete(`/certificate/delete/${id}`), // ✅ fixed interpolation
 };
 
-export default api; 
+export default api;

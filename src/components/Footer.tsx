@@ -1,5 +1,5 @@
 import { GraduationCap, Phone, Mail, MapPin } from "lucide-react";
-
+import TallyExpertLogo from '../../src/assets/TallyExpertLogo.png'
 const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground">
@@ -7,11 +7,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <GraduationCap className="h-8 w-8" />
-              <div>
-                <h3 className="text-xl font-bold">Tally Expert</h3>
-                <p className="text-primary-foreground/80">Education Center</p>
-              </div>
+              <img src={TallyExpertLogo} alt="Logo"  className="h-20"/>
             </div>
             <p className="text-primary-foreground/80 mb-4">
               IT Courses require proper Guidance & Teaching procedure. We provide highly qualified 
@@ -53,7 +49,7 @@ const Footer = () => {
               </div>
               <div className="flex items-start space-x-2">
                 <MapPin className="h-4 w-4 mt-1" />
-                <span>Tally Expert Education Center<br />Main Road, City Center</span>
+                <span>Ashok Nagar Road no 1 Kankarbagh <br/> Patna Pin Code 800020 Bihar</span>
               </div>
             </div>
           </div>

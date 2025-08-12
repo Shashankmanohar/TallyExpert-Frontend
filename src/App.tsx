@@ -11,6 +11,7 @@ import Courses from "./pages/Courses";
 import Admin from "./pages/Admin";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import NotFound from "./pages/NotFound";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/contact" element={<Contact/>}/>
               <Route path="/verify-certificate" element={<VerifyCertificate />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

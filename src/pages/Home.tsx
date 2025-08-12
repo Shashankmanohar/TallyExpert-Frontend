@@ -110,7 +110,7 @@ const Home = () => {
                 </Button>
               </Link>
               <Link to="/admin">
-                <Button variant="outline" size="lg" className="text-lg px-8 border-white text-white hover:bg-white hover:text-primary">
+                <Button variant="outline" size="lg" className="text-lg px-8 border-white text-primary bg-white ">
                   Admin Login
                 </Button>
               </Link>
@@ -242,7 +242,7 @@ const Home = () => {
                 Verify Your Certificate
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="text-lg px-8 border-white text-white hover:bg-white hover:text-primary">
+            <Button variant="outline" size="lg" className="text-lg px-8 border-white text-primary bg-white">
               Contact Us Today
             </Button>
           </div>

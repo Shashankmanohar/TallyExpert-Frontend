@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Award, CheckCircle, XCircle, User, Calendar, Hash } from "lucide-react";
+import { Search, Award, CheckCircle, XCircle, User, Calendar, Hash, BookOpen, Clock } from "lucide-react";
 import { certificateAPI } from "@/lib/api";
 
 interface Certificate {
@@ -15,6 +15,8 @@ interface Certificate {
   certificateNumber: string;
   rollNo: string;
   passingYear: string;
+  courseOfDuration: string; 
+  courseName: string;       
   createdAt: string;
 }
 
@@ -226,11 +228,17 @@ const VerifyCertificate = () => {
                             <span className="font-medium">Passing Year:</span>
                             <span>{searchResult.passingYear}</span>
                           </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Course Name:</span>
+                            <span>{searchResult.courseName}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Course Duration:</span>
+                            <span>{searchResult.courseOfDuration}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-
-
 
                     {/* Verification Details */}
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
