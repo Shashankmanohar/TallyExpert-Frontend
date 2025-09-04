@@ -178,7 +178,7 @@ const VerifyCertificate = () => {
                     {/* Certificate Header */}
                     <div className="text-center border-b pb-6">
                       <div className="bg-gradient-hero text-white p-6 rounded-lg">
-                        <h2 className="text-2xl font-bold mb-2">TALLY EXPERT EDUCATION CENTER</h2>
+                        <h2 className="text-2xl font-bold mb-2">TALLY EXPERT COMPUTER EDUCATION CENTER</h2>
                         <p className="text-lg">Certificate of Completion</p>
                         <div className="flex items-center justify-center mt-4">
                           <Award className="h-8 w-8 mr-2" />
