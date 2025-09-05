@@ -247,8 +247,7 @@ const VerifyCertificate = () => {
                         <span className="font-medium text-green-800">Verification Status: AUTHENTIC</span>
                       </div>
                       <p className="text-sm text-green-700 mt-2">
-                        This certificate has been issued by Tally Expert Education Center and is valid. 
-                        Certificate created on: {new Date(searchResult.createdAt).toLocaleDateString()}
+                        This certificate has been issued by Tally Expert Computer Education Center and is hereby declared valid.
                       </p>
                     </div>
                   </div>
